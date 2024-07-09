@@ -17,7 +17,8 @@ def get_soup(session, url):
         soup = BeautifulSoup(response.text, 'lxml')
         return soup
     except RequestException:
-        raise PageNotFound('Ошибка при загрузке страницы.Проверьте ваше подключение к интернету.')
+        raise PageNotFound('Ошибка при загрузке страницы.'
+                           'Проверьте ваше подключение к интернету.')
 
 
 def get_response(session, url):

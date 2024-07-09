@@ -11,6 +11,7 @@ from configs import configure_argument_parser, configure_logging
 from outputs import control_output
 from utils import (
     get_response, find_tag, add_count, status_pep, is_status_tag)
+from exceptions import PageNotFound
 
 
 def whats_new(session):
@@ -36,7 +37,7 @@ def whats_new(session):
         href_join = urljoin(whats_new_url, href)
         response = get_response(session, href_join)
         if response is None:
-            continue
+            raise PageNotFound()
 
         soup = BeautifulSoup(response.text, 'lxml')
         h1 = find_tag(soup, 'h1')
@@ -51,6 +52,8 @@ def whats_new(session):
 def latest_versions(session):
     pattern = r'Python (?P<version>\d\.\d+) \((?P<status>.*)\)'
     response = get_response(session, MAIN_DOC_URL)
+    if response is None:
+        return
     soup = BeautifulSoup(response.text, 'lxml')
     sidebar = find_tag(soup, 'div', attrs={'class': 'sphinxsidebarwrapper'})
     ul_tags = sidebar.find_all('ul')
@@ -81,6 +84,8 @@ def latest_versions(session):
 def download(session):
     downloads_url = urljoin(MAIN_DOC_URL, 'download.html')
     response = get_response(session, downloads_url)
+    if response is None:
+        return
     soup = BeautifulSoup(response.text, 'lxml')
     table = find_tag(soup, 'table', attrs={'class': 'docutils'})
 
@@ -107,7 +112,7 @@ def pep(session):
     soup = BeautifulSoup(response.text, 'lxml')
     pep_urls_tag = soup.find_all(
         'a', attrs={'class': 'pep reference internal',
-                    'href': re.compile(PEP_REGUL)})
+                    'href': re.compile(PEP_REGUL)}, limit=5)
 
     results = []
     mismatched_data = []

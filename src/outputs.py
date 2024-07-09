@@ -1,5 +1,5 @@
 from prettytable import PrettyTable
-from constants import BASE_DIR, DATETIME_FORMAT
+from constants import BASE_DIR, DATETIME_FORMAT, PRETTY_OUTPRINT, CSV_OUTPRINT
 import datetime as db
 import csv
 import logging

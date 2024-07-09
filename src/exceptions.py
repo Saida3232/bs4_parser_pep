@@ -4,3 +4,7 @@ class ParserFindTagException(Exception):
 
 class PageNotFound(Exception):
     """Вызывается, когда не получается загрузить страницу."""
+
+
+class NotFoundException(Exception):
+    """Вызывается, когда не получается найти нужный элемент."""

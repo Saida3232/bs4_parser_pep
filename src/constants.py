@@ -25,11 +25,13 @@ LOG_FORMAT = '"%(asctime)s - [%(levelname)s] - %(message)s"'
 DT_FORMAT = "%d.%m.%Y %H:%M:%S"
 
 BASE_DIR = Path(__file__).parent
-RESULTS_DIR = BASE_DIR/'results'
-DOWNLOAD_DIR = BASE_DIR / 'downloads'
-LOG_DIR = BASE_DIR / 'logs'
-LOG_FILE = LOG_DIR / 'parser.log'
+RESULTS_DIR = 'results'
+DOWNLOAD_DIR = 'downloads'
+LOG_DIR = 'logs'
+LOG_FILE = 'parser.log'
 
 
 PRETTY_OUTPUT = 'pretty'
 CSV_OUTPUT = 'file'
+
+dir_dir = BASE_DIR / 'results'

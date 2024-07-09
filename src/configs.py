@@ -2,8 +2,8 @@ import argparse
 import logging
 from logging.handlers import RotatingFileHandler
 
-from constants import (CSV_OUTPUT, DT_FORMAT, LOG_DIR, LOG_FILE, LOG_FORMAT,
-                       PRETTY_OUTPUT)
+from constants import (BASE_DIR, CSV_OUTPUT, DT_FORMAT, LOG_DIR, LOG_FILE,
+                       LOG_FORMAT, PRETTY_OUTPUT)
 
 
 def configure_argument_parser(available_modes):
@@ -26,7 +26,8 @@ def configure_argument_parser(available_modes):
 
 
 def configure_logging():
-    LOG_DIR.mkdir(exist_ok=True)
+    log_dir = BASE_DIR / LOG_DIR
+    log_dir.mkdir(exist_ok=True)
     rotating_handler = RotatingFileHandler(
         LOG_FILE, maxBytes=10 ** 6, backupCount=5
     )

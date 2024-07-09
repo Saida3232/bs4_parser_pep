@@ -6,8 +6,8 @@ import requests_cache
 from tqdm import tqdm
 
 from configs import configure_argument_parser, configure_logging
-from constants import (DOWNLOAD_DIR, EXPECTED_STATUS, MAIN_DOC_URL, PEP_REGUL,
-                       PEP_URL)
+from constants import (BASE_DIR, DOWNLOAD_DIR, EXPECTED_STATUS, MAIN_DOC_URL,
+                       PEP_REGUL, PEP_URL)
 from exceptions import NotFoundException
 from outputs import control_output
 from utils import add_count, find_tag, get_soup, is_status_tag, status_pep
@@ -69,7 +69,6 @@ def latest_versions(session):
 
 def download(session):
     downloads_url = urljoin(MAIN_DOC_URL, 'download.html')
-
     soup = get_soup(session, downloads_url)
     table = find_tag(soup, 'table', attrs={'class': 'docutils'})
 
@@ -78,9 +77,9 @@ def download(session):
     archive_url = urljoin(downloads_url, pdf_a4_link)
     filename = archive_url.split('/')[-1]
 
-    DOWNLOAD_DIR.mkdir(exist_ok=True)
-
-    archive_path = DOWNLOAD_DIR / filename
+    downloads_dir = BASE_DIR / DOWNLOAD_DIR
+    downloads_dir.mkdir(exist_ok=True)
+    archive_path = downloads_dir / filename
     response = session.get(archive_url)
     with open(archive_path, 'wb') as file:
         file.write(response.content)
@@ -92,7 +91,7 @@ def pep(session):
     soup = get_soup(session, PEP_URL)
     pep_urls_tag = soup.find_all(
         'a', attrs={'class': 'pep reference internal',
-                    'href': re.compile(PEP_REGUL)}, limit=5)
+                    'href': re.compile(PEP_REGUL)})
 
     results = []
     mismatched_data = []

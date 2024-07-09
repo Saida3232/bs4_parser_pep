@@ -1,18 +1,23 @@
-from prettytable import PrettyTable
-from constants import BASE_DIR, DATETIME_FORMAT
-import datetime as db
 import csv
+import datetime as db
 import logging
+
+from prettytable import PrettyTable
+
+from constants import CSV_OUTPUT, DATETIME_FORMAT, PRETTY_OUTPUT, RESULTS_DIR
 
 
 def control_output(results, cli_args):
+
+    OUTPUT_ACTIONS = {
+        PRETTY_OUTPUT: pretty_output,
+        CSV_OUTPUT: file_output,
+    }
     output = cli_args.output
-    if output == 'pretty':
-        pretty_output(results)
-    elif output == 'file':
-        file_output(results, cli_args)
-    else:
-        default_output(results)
+    selected_output_function = OUTPUT_ACTIONS.get(output, default_output)
+    if selected_output_function == OUTPUT_ACTIONS['file']:
+        selected_output_function(results, cli_args)
+    selected_output_function(results)
 
 
 def default_output(results):
@@ -29,14 +34,13 @@ def pretty_output(results):
 
 
 def file_output(results, cli_args):
-    results_dir = BASE_DIR/'results'
-    results_dir.mkdir(exist_ok=True)
+    RESULTS_DIR.mkdir(exist_ok=True)
 
     parse_mode = cli_args.mode
     now = db.datetime.now()
     new_now = now.strftime(DATETIME_FORMAT)
     file_name = f'{parse_mode}_{new_now}.csv'
-    file_path = results_dir / file_name
+    file_path = RESULTS_DIR / file_name
 
     with open(file_path, 'w', encoding='utf-8', newline='') as f:
         writer = csv.writer(f, dialect='unix', delimiter=' ', quotechar='|')

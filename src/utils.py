@@ -1,7 +1,23 @@
 import logging
+
+from bs4 import BeautifulSoup
 from requests import RequestException
-from exceptions import ParserFindTagException
+
 from constants import EXPECTED_STATUS
+from exceptions import PageNotFound, ParserFindTagException
+
+
+def get_soup(session, url):
+    try:
+        response = session.get(url)
+        if response is None:
+            logging.error('Не удалось получить корректный ответ от сервера')
+            raise PageNotFound('Ошибка при загрузке страницы.')
+        response.encoding = 'utf-8'
+        soup = BeautifulSoup(response.text, 'lxml')
+        return soup
+    except RequestException:
+        raise PageNotFound('Ошибка при загрузке страницы.Проверьте ваше подключение к интернету.')
 
 
 def get_response(session, url):

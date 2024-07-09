@@ -77,7 +77,7 @@ def download(session):
     archive_url = urljoin(downloads_url, pdf_a4_link)
     filename = archive_url.split('/')[-1]
 
-    downloads_dir = BASE_DIR/DOWNLOAD_DIR
+    downloads_dir = BASE_DIR/'downloads'
     downloads_dir.mkdir(exist_ok=True)
     archive_path = downloads_dir / filename
     response = session.get(archive_url)
@@ -91,7 +91,7 @@ def pep(session):
     soup = get_soup(session, PEP_URL)
     pep_urls_tag = soup.find_all(
         'a', attrs={'class': 'pep reference internal',
-                    'href': re.compile(PEP_REGUL)})
+                    'href': re.compile(PEP_REGUL)}, limit=5)
 
     results = []
     mismatched_data = []

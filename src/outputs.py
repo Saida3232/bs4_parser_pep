@@ -36,7 +36,7 @@ def pretty_output(results):
 
 
 def file_output(results, cli_args):
-    results_dir = BASE_DIR/RESULTS_DIR
+    results_dir = BASE_DIR/'results'
     results_dir.mkdir(exist_ok=True)
 
     parse_mode = cli_args.mode
@@ -47,6 +47,5 @@ def file_output(results, cli_args):
 
     with open(file_path, 'w', encoding='utf-8', newline='') as f:
         writer = csv.writer(f, dialect='unix', delimiter=' ', quotechar='|')
-        writer.writerow(['Spam', 'Baked Beans', 'hjkl'])
         writer.writerows(results)
     logging.info(f'Файл с результатами был сохранён: {file_path}')

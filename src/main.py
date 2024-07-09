@@ -6,7 +6,7 @@ import requests_cache
 from tqdm import tqdm
 
 from configs import configure_argument_parser, configure_logging
-from constants import (BASE_DIR, DOWNLOAD_DIR, EXPECTED_STATUS, MAIN_DOC_URL,
+from constants import (BASE_DIR, EXPECTED_STATUS, MAIN_DOC_URL,
                        PEP_REGUL, PEP_URL)
 from exceptions import NotFoundException
 from outputs import control_output

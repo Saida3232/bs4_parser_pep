@@ -26,7 +26,7 @@ def configure_argument_parser(available_modes):
 
 
 def configure_logging():
-    log_dir = BASE_DIR / LOG_DIR
+    log_dir = BASE_DIR/LOG_DIR
     log_dir.mkdir(exist_ok=True)
     rotating_handler = RotatingFileHandler(
         LOG_FILE, maxBytes=10 ** 6, backupCount=5

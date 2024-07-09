@@ -33,5 +33,3 @@ LOG_FILE = 'parser.log'
 
 PRETTY_OUTPUT = 'pretty'
 CSV_OUTPUT = 'file'
-
-dir_dir = BASE_DIR / 'results'

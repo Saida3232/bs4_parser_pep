@@ -23,10 +23,6 @@ def get_response(session, url):
                            'Проверьте ваше подключение к интернету.')
 
 
-def make_soup(session, url):
-    return BeautifulSoup(get_response(session, url).text, features='lxml')
-
-
 def find_tag(soup, tag, attrs=None):
     searched_tag = soup.find(tag, attrs=(attrs or {}))
     if searched_tag is None:

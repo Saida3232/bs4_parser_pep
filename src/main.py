@@ -101,7 +101,7 @@ def pep(session):
     soup = get_soup(session, PEP_URL)
     pep_urls_tag = soup.find_all(
         'a', attrs={'class': 'pep reference internal',
-                    'href': re.compile(PEP_REGUL)}, limit=5)
+                    'href': re.compile(PEP_REGUL)})
 
     results = []
     mismatched_data = []

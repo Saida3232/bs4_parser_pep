@@ -6,11 +6,20 @@ import requests_cache
 from tqdm import tqdm
 
 from configs import configure_argument_parser, configure_logging
-from constants import (DOWNLOAD_DIR, EXPECTED_STATUS, MAIN_DOC_URL, PEP_REGUL,
+from constants import (DOWNLOAD_DIR_NAME,
+                       EXPECTED_STATUS,
+                       MAIN_DOC_URL,
+                       PEP_REGUL,
+                       BASE_DIR,
                        PEP_URL)
 from exceptions import NotFoundException
 from outputs import control_output
-from utils import add_count, find_tag, get_soup, is_status_tag, status_pep
+from utils import (add_count,
+                   find_tag,
+                   get_soup,
+                   is_status_tag,
+                   status_pep,
+                   get_response)
 
 
 def whats_new(session):
@@ -77,11 +86,11 @@ def download(session):
     pdf_a4_link = pdf_a4_tag['href']
     archive_url = urljoin(downloads_url, pdf_a4_link)
     filename = archive_url.split('/')[-1]
+    download_dir = BASE_DIR / DOWNLOAD_DIR_NAME
+    download_dir.mkdir(exist_ok=True)
 
-    DOWNLOAD_DIR.mkdir(exist_ok=True)
-
-    archive_path = DOWNLOAD_DIR / filename
-    response = session.get(archive_url)
+    archive_path = download_dir / filename
+    response = get_response(session, archive_url)
     with open(archive_path, 'wb') as file:
         file.write(response.content)
 

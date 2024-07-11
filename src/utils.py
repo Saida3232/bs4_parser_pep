@@ -8,17 +8,9 @@ from exceptions import PageNotFound, ParserFindTagException
 
 
 def get_soup(session, url):
-    try:
-        response = session.get(url)
-        if response is None:
-            logging.error('Не удалось получить корректный ответ от сервера')
-            raise PageNotFound('Ошибка при загрузке страницы.')
-        response.encoding = 'utf-8'
-        soup = BeautifulSoup(response.text, 'lxml')
-        return soup
-    except RequestException:
-        raise PageNotFound('Ошибка при загрузке страницы.'
-                           'Проверьте ваше подключение к интернету.')
+    response = get_response(session, url)
+    soup = BeautifulSoup(response.text, 'lxml')
+    return soup
 
 
 def get_response(session, url):
@@ -27,10 +19,12 @@ def get_response(session, url):
         response.encoding = 'utf-8'
         return response
     except RequestException:
-        logging.exception(
-            f'Возникла ошибка при загрузке страницы {url}',
-            stack_info=True
-        )
+        raise PageNotFound('Ошибка при загрузке страницы.'
+                           'Проверьте ваше подключение к интернету.')
+
+
+def make_soup(session, url):
+    return BeautifulSoup(get_response(session, url).text, features='lxml')
 
 
 def find_tag(soup, tag, attrs=None):

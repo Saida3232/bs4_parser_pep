@@ -35,7 +35,7 @@ def pretty_output(results):
 
 
 def file_output(results, cli_args):
-    results_dir = BASE_DIR/'results'
+    results_dir = BASE_DIR / 'results'
     results_dir.mkdir(exist_ok=True)
 
     parse_mode = cli_args.mode

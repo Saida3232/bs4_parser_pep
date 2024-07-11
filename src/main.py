@@ -6,20 +6,19 @@ import requests_cache
 from tqdm import tqdm
 
 from configs import configure_argument_parser, configure_logging
-from constants import (BASE_DIR, EXPECTED_STATUS, MAIN_DOC_URL,
-                       PEP_REGUL, PEP_URL)
-from exceptions import NotFoundException
+from constants import (BASE_DIR, MAIN_DOC_URL, PEP_URL,
+                       PEP_REGUL, EXPECTED_STATUS)
 from outputs import control_output
-from utils import add_count, find_tag, get_soup, is_status_tag, status_pep
+from utils import (find_tag, get_response, get_soup,
+                   is_status_tag, status_pep, add_count)
 
 
 def whats_new(session):
     whats_new_url = urljoin(MAIN_DOC_URL, 'whatsnew/')
-    soup = get_soup(session, whats_new_url)
 
+    soup = get_soup(session, whats_new_url)
     main_div = find_tag(soup, 'section', attrs={'id': 'what-s-new-in-python'})
     div_with_ul = find_tag(main_div, 'div', attrs={'class': 'toctree-wrapper'})
-
     sections_by_python = div_with_ul.find_all(
         'li', attrs={'class': 'toctree-l1'})
 
@@ -29,12 +28,9 @@ def whats_new(session):
         version_a_tag = find_tag(section, 'a')
         href = version_a_tag['href']
         href_join = urljoin(whats_new_url, href)
-
         soup = get_soup(session, href_join)
         h1 = find_tag(soup, 'h1')
-
         dl = find_tag(soup, 'dl').text.replace('\n', ' ')
-
         result.append((href_join, h1, dl))
 
     return result
@@ -50,9 +46,11 @@ def latest_versions(session):
             a_tags = ul.find_all('a')
             break
         else:
-            raise NotFoundException('Не найден список c версиями Python')
+            raise Exception('Ничего не нашлось')
 
     results = [('Ссылка на документацию', 'Версия', 'Статус')]
+    for o in a_tags:
+        print(o.text)
 
     for a in a_tags:
         link = urljoin(MAIN_DOC_URL, a['href'])
@@ -80,7 +78,7 @@ def download(session):
     downloads_dir = BASE_DIR / 'downloads'
     downloads_dir.mkdir(exist_ok=True)
     archive_path = downloads_dir / filename
-    response = session.get(archive_url)
+    response = get_response(session, archive_url)
     with open(archive_path, 'wb') as file:
         file.write(response.content)
 
@@ -132,7 +130,7 @@ def pep(session):
 
 MODE_TO_FUNCTION = {
     'whats-new': whats_new,
-    'download': download,
+    'dowload': download,
     'latest-versions': latest_versions,
     'pep': pep
 }

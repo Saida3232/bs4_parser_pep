@@ -4,28 +4,16 @@ import logging
 
 from prettytable import PrettyTable
 
-from constants import BASE_DIR, DATETIME_FORMAT
+from constants import (BASE_DIR, DATETIME_FORMAT,
+                       PRETTY_OUTPUT, CSV_OUTPUT, RESULTS_DIR_NAME)
 
 
-def control_output(results, cli_args):
-    OUTPUT_ACTIONS = {
-        'pretty': pretty_output,
-        'file': file_output,
-    }
-    output = cli_args.output
-    selected_output_function = OUTPUT_ACTIONS.get(output, default_output)
-    if selected_output_function == OUTPUT_ACTIONS['file']:
-        selected_output_function(results, cli_args)
-    else:
-        selected_output_function(results)
-
-
-def default_output(results):
+def default_output(results, *args):
     for row in results:
         print(*row)
 
 
-def pretty_output(results):
+def pretty_output(results, *args):
     pretty_table = PrettyTable()
     pretty_table.field_names = results[0]
     pretty_table.align = 'l'
@@ -34,7 +22,7 @@ def pretty_output(results):
 
 
 def file_output(results, cli_args):
-    results_dir = BASE_DIR/'results'
+    results_dir = BASE_DIR / RESULTS_DIR_NAME
     results_dir.mkdir(exist_ok=True)
 
     parse_mode = cli_args.mode
@@ -48,3 +36,14 @@ def file_output(results, cli_args):
         writer.writerow(['Spam', 'Baked Beans', 'hjkl'])
         writer.writerows(results)
     logging.info(f'Файл с результатами был сохранён: {file_path}')
+
+
+OUTPUT_ACTIONS = {
+    PRETTY_OUTPUT: pretty_output,
+    CSV_OUTPUT: file_output,
+    None: default_output
+}
+
+
+def control_output(results, cli_args):
+    OUTPUT_ACTIONS.get(cli_args.output)(results, cli_args)

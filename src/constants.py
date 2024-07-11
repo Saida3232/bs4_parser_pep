@@ -25,6 +25,7 @@ LOG_FORMAT = '"%(asctime)s - [%(levelname)s] - %(message)s"'
 DT_FORMAT = "%d.%m.%Y %H:%M:%S"
 
 BASE_DIR = Path(__file__).parent
+RESULTS_DIR_NAME = 'results'
 
 LOG_DIR = 'logs'
 LOG_FILE = 'parser.log'

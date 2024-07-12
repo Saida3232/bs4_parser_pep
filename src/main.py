@@ -12,7 +12,7 @@ from constants import (DOWNLOAD_DIR_NAME,
                        PEP_REGUL,
                        BASE_DIR,
                        PEP_URL)
-from exceptions import NotFoundException
+from exceptions import NotFoundException, PageNotFound
 from outputs import control_output
 from utils import (add_count,
                    find_tag,
@@ -33,18 +33,24 @@ def whats_new(session):
         'li', attrs={'class': 'toctree-l1'})
 
     result = [('Ссылка на статью', 'Заголовок', 'Редактор, автор')]
-
+    error_messages = []
     for section in tqdm(sections_by_python):
         version_a_tag = find_tag(section, 'a')
         href = version_a_tag['href']
         href_join = urljoin(whats_new_url, href)
-
-        soup = get_soup(session, href_join)
+        try:
+            soup = get_soup(session, href_join)
+        except PageNotFound as e:
+            error_messages.append(
+                f"Не удалось установить соединение по {href_join}: {e}")
         h1 = find_tag(soup, 'h1')
 
         dl = find_tag(soup, 'dl').text.replace('\n', ' ')
 
         result.append((href_join, h1, dl))
+    if error_messages:
+        for error in error_messages:
+            logging.error(error)
 
     return result
 
@@ -105,13 +111,17 @@ def pep(session):
 
     results = []
     mismatched_data = []
+    error_messages = []
     for pep_url in tqdm(pep_urls_tag):
         url = urljoin(PEP_URL, pep_url['href'])
 
         td = pep_url.parent.parent
         status_in_card = find_tag(td, 'td').text[1:]
-
-        soup = get_soup(session, url)
+        try:
+            soup = get_soup(session, url)
+        except PageNotFound as e:
+            error_messages.append(
+                f'Не удалось установить соединение по {url}: {e}')
         dd = soup.find(is_status_tag)
         status_tag = dd.find_next_sibling(
             'dd')

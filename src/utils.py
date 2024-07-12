@@ -7,16 +7,16 @@ from constants import EXPECTED_STATUS
 from exceptions import PageNotFound, ParserFindTagException
 
 
-def get_soup(session, url):
+def get_soup(session, url, parser='lxml'):
     response = get_response(session, url)
-    soup = BeautifulSoup(response.text, 'lxml')
+    soup = BeautifulSoup(response.text, parser)
     return soup
 
 
-def get_response(session, url):
+def get_response(session, url, encoding='utf-8'):
     try:
         response = session.get(url)
-        response.encoding = 'utf-8'
+        response.encoding = encoding
         return response
     except RequestException:
         raise PageNotFound('Ошибка при загрузке страницы.'
